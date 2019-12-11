@@ -12,16 +12,17 @@
 		</encoder>
 	</appender>
 
-	<logger name="play" level="INFO">
+	<logger name="play" level="DEBUG">
 
 		<appender-ref ref="STDOUT" />
 	</logger>
 	
-	<logger name="application" level="DEBUG">
+	<logger name="org" level="DEBUG">
+
 		<appender-ref ref="STDOUT" />
 	</logger>
 	
-	<root level="info">
+	<root level="debug">
 		<appender-ref ref="STDOUT" />
 	</root>
 

@@ -5,6 +5,7 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -18,8 +19,11 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.util.Timeout;
 import model.Student;
+import play.data.Form;
+import play.data.FormFactory;
 import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
+import play.libs.typedmap.TypedMap;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
@@ -30,12 +34,14 @@ public class StudentController extends Controller {
 	private HttpExecutionContext ec;
 
 	private ActorRef storeRef;
+	private FormFactory formFactory;
 
 	@Inject
-	public StudentController(HttpExecutionContext ec, ActorSystem system) {
+	public StudentController(HttpExecutionContext ec, ActorSystem system, FormFactory formFactory) {
 
 		this.ec = ec;
-		storeRef = system.actorOf(StudentStoreActor.props(), "store");
+		this.storeRef = system.actorOf(StudentStoreActor.props(), "store");
+		this.formFactory = formFactory;
 
 	}
 
@@ -45,8 +51,17 @@ public class StudentController extends Controller {
 			if (json == null) {
 				return badRequest(Util.createResponse("Expecting Json data", false));
 			}
+
+			// do the form validation for the request
+			Form<Student> vlidationForm = formFactory.form(Student.class).bind((new play.i18n.Lang(Locale.US)),
+					TypedMap.empty(), json);
+
+			if (vlidationForm.hasErrors())
+				return badRequest(Util.createResponse(vlidationForm.errorsAsJson(), false));
+
 			// create student and set create true
 			Student std = Json.fromJson(json, Student.class);
+
 			std.setCreate(true);
 			// set the timeout for te asyc call
 			Timeout timeout = Timeout.create(Duration.ofMillis(5000));
@@ -84,12 +99,12 @@ public class StudentController extends Controller {
 		}, ec.current());
 	}
 
-	public CompletionStage<Result> retrieve(int id) {
+	public CompletionStage<Result> retrieve(String id) {
 		return supplyAsync(() -> {
 
 			Timeout timeout = Timeout.create(Duration.ofMillis(5000));
 
-			CompletionStage<Object> completionStage = FutureConverters.toJava(ask(storeRef, new Integer(id), timeout));
+			CompletionStage<Object> completionStage = FutureConverters.toJava(ask(storeRef, id, timeout));
 
 			CompletableFuture<Object> ask = completionStage.toCompletableFuture();
 
@@ -127,11 +142,11 @@ public class StudentController extends Controller {
 		}, ec.current());
 	}
 
-	public CompletionStage<Result> delete(int id) {
+	public CompletionStage<Result> delete(String id) {
 		return supplyAsync(() -> {
 
 			Student std = new Student();
-			std.setId(id);
+			std.setServiceId(id);
 			std.setDelete(true);
 
 			Timeout timeout = Timeout.create(Duration.ofMillis(5000));
