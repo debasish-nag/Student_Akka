@@ -14,9 +14,12 @@ libraryDependencies += "com.google.code.gson" % "gson" % "2.8.6"
 libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.5.26"
 libraryDependencies += "com.typesafe.akka" %% "akka-slf4j" % "2.5.26"
 libraryDependencies += "com.typesafe.akka" %% "akka-stream" % "2.5.26"
-libraryDependencies += "org.projectlombok" % "lombok" % "1.18.8"
-// https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-core-asl
-libraryDependencies += "org.codehaus.jackson" % "jackson-core-asl" % "1.1.0"
+libraryDependencies += "org.projectlombok" % "lombok" % "1.18.8" % "provided"
+libraryDependencies += "com.couchbase.client" % "java-client" % "2.7.9"
+
+
+
+
 
 
 
