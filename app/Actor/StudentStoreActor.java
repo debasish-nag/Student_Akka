@@ -1,8 +1,6 @@
 package Actor;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -18,8 +16,7 @@ public class StudentStoreActor extends AbstractActor {
 
 	private final LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);
 
-	private Map<Integer, Student> students = new HashMap<>();
-
+	@javax.inject.Inject
 	private StudentRepositary repoStore;
 
 	public static Props props() {
@@ -28,12 +25,14 @@ public class StudentStoreActor extends AbstractActor {
 	}
 
 	{
+
 		repoStore = new StudentRepositary();
 	}
 
 	@Override
 	public Receive createReceive() {
 		// TODO Auto-generated method stub
+
 		return receiveBuilder().match(Student.class, s -> s.isUpdate(), this::updateStudent)
 				.match(Student.class, s -> s.isCreate(), this::addStudent)
 				.match(Student.class, s -> s.isDelete(), this::deleteStudent).match(String.class, this::getStudent)
@@ -42,7 +41,8 @@ public class StudentStoreActor extends AbstractActor {
 
 	public void addStudent(Student student) throws JsonProcessingException {
 
-		log.info("into the addStudent :" + getSender().toString());
+		log.info("into the addStudent :" + getSender().toString() + "the repostore id:" + repoStore.hashCode()
+				+ " thread :" + Thread.currentThread());
 		repoStore.createStudent(student);
 		log.info("the sender is :" + getSender().toString());
 		getSender().tell(Optional.of(student), getSelf());
@@ -52,6 +52,8 @@ public class StudentStoreActor extends AbstractActor {
 	public void getAllStudents(Object obj) {
 
 		log.info("the sender is :" + getSender().toString());
+		log.info("into the addStudent :" + getSender().toString() + "the repostore id:" + repoStore.hashCode()
+				+ " thread :" + Thread.currentThread());
 		getSender().tell(Optional.of(new ArrayList<>(repoStore.fetchAllStudent())), getSelf());
 
 	}
@@ -70,7 +72,7 @@ public class StudentStoreActor extends AbstractActor {
 
 	public void deleteStudent(Student student) {
 
-		getSender().tell(students.remove(student.getServiceId()) != null, getSelf());
+		getSender().tell(Optional.of(repoStore.deleteStudent(student.getServiceId())), getSelf());
 
 	}
 

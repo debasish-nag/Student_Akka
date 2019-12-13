@@ -14,7 +14,7 @@ import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import Actor.StudentStoreActor;
+import Actor.DbSupervisor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.util.Timeout;
@@ -40,7 +40,7 @@ public class StudentController extends Controller {
 	public StudentController(HttpExecutionContext ec, ActorSystem system, FormFactory formFactory) {
 
 		this.ec = ec;
-		this.storeRef = system.actorOf(StudentStoreActor.props(), "store");
+		this.storeRef = system.actorOf(DbSupervisor.props(), "store");
 		this.formFactory = formFactory;
 
 	}

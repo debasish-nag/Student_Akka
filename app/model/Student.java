@@ -15,6 +15,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import java.util.*;
+import javax.validation.Valid;
 
 
 @NoArgsConstructor
@@ -55,5 +57,10 @@ public class Student {
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private boolean delete;
 
+	/*
+	 * @NotNull
+	 * 
+	 * @Valid private List<Adress> add;
+	 */
 
 }

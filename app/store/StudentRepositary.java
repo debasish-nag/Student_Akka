@@ -29,15 +29,15 @@ public class StudentRepositary {
 
 	public List<Student> fetchAllStudent() {
 
-		logger.info("New Thread instantiated...");
+		
 
 		List<Student> serviceMasterList = couchbaseConfig.student.async()
-				.query(N1qlQuery.simple("SELECT * FROM `beer-sample`")).flatMap(AsyncN1qlQueryResult::rows)
+				.query(N1qlQuery.simple("SELECT * FROM `Student`")).flatMap(AsyncN1qlQueryResult::rows)
 				.map(data -> {
-					return createObject(data.value().get("beer-sample").toString());
+					return createObject(data.value().get("Student").toString());
 				}).toList().timeout(10000000, TimeUnit.SECONDS).toBlocking().single();
 
-		logger.info("Thread Signing Off...");
+		
 
 		return serviceMasterList;
 	}
@@ -76,7 +76,7 @@ public class StudentRepositary {
 
 	}
 
-	public String deleteServiceMasterById(String id) {
+	public String deleteStudent(String id) {
 		RawJsonDocument jsonDocument = couchbaseConfig.student.remove(id, RawJsonDocument.class);
 
 		return jsonDocument.id();
