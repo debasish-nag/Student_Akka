@@ -18,7 +18,6 @@ import lombok.ToString;
 import java.util.*;
 import javax.validation.Valid;
 
-
 @NoArgsConstructor
 @Getter
 @Setter
@@ -26,26 +25,24 @@ import javax.validation.Valid;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class Student {
-	
-	
+
 	@Id
-	@Field
+
 	private String serviceId = UUID.randomUUID().toString();
 
 	@NotNull
 	@Size(min = 5, max = 10)
-	@Field
+
 	private String firstName;
-	
+
 	@NotNull
-	@Field
+
 	private String lastName;
 
-	@Min(18)
-	@Field
+	@Min(value = 18, message = "The age is '${validatedValue}' must be greater than {value}")
+
 	private int age;
-	
-	@Field
+
 	private String id;
 
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -57,10 +54,9 @@ public class Student {
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private boolean delete;
 
-	/*
-	 * @NotNull
-	 * 
-	 * @Valid private List<Adress> add;
-	 */
+	@NotNull
+
+	@Valid
+	private List<Adress> add;
 
 }

@@ -55,7 +55,8 @@ public class StudentController extends Controller {
 			// do the form validation for the request
 			Form<Student> vlidationForm = formFactory.form(Student.class).bind((new play.i18n.Lang(Locale.US)),
 					TypedMap.empty(), json);
-
+			
+			System.out.println("the validation error is :" + vlidationForm.errors());
 			if (vlidationForm.hasErrors())
 				return badRequest(Util.createResponse(vlidationForm.errorsAsJson(), false));
 
